@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Cara,zzxxcclloopp@gmail.com"><title>关于移植 HEXO · Cara's Blog</title><meta name="description" content="迫于新买了台电脑, 所以要移植一下台式上的博客. 由于老是忘记 hexo 的官网所以在这儿附一个hexo 官网
+准备工作将原电脑上的博客源文件上传至 GitHub, 只要源文件相同那么博客会认为是同一个项目, 包括如下文件:
+
+其实主要需要的文件是_conifg.yml/ source文件夹和 th"><meta name="keywords" content="hexo, HTML, CSS, Javascript, Node.js"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="http://ordjgqxuv.bkt.clouddn.com/nike-girl/IMG_2930.JPG" style="width:127px;"><h3 title=""><a href="/">Cara's Blog</a></h3><div class="description"><p>咸鱼的博客和学习笔记📒 'Lok-Tar Ogar!'.</p></div></div></div><ul class="social-links"><li><a href="http://github.com/Caraws"><i class="fa fa-github"></i></a></li></ul><div class="footer"></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a onclick="window.history.go(-1)" class="fa fa-chevron-left"> </a></li></div><div class="avatar"><img src="http://ordjgqxuv.bkt.clouddn.com/cara_30/WechatIMG8.jpeg"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>关于移植 HEXO</a></h3></div><div class="post-content"><p>迫于新买了台电脑, 所以要移植一下台式上的博客. 由于老是忘记 hexo 的官网所以在这儿附一个<a href="https://hexo.io/docs/" target="_blank" rel="noopener">hexo 官网</a></p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>将原电脑上的博客源文件上传至 GitHub, 只要源文件相同那么博客会认为是同一个项目, 包括如下文件:</p>
+<p><img src="http://ordnc4i2b.bkt.clouddn.com/blog_source.jpg" alt="blog_source_files"></p>
+<p>其实主要需要的文件是<code>_conifg.yml</code>/ <code>source</code>文件夹和 <code>themes</code>文件夹,<br>接下来新建一个仓库, 把这些文件上传上去.</p>
+<h3 id="移植"><a href="#移植" class="headerlink" title="移植"></a>移植</h3><ol>
+<li>在新电脑上克隆刚刚创建的这个项目</li>
+</ol>
+<p><img src="http://ordnc4i2b.bkt.clouddn.com/17_10_14_blog.png" alt="git_clone_files"> </p>
+<ol start="2">
+<li>初始化新的博客<ol>
+<li>新建一个文件夹</li>
+<li>命令行进入这个文件夹 <code>cnpm install hexo-cli -g</code> 全局安装 hexo(默认已经装过 <a href="https://npm.taobao.org/" target="_blank" rel="noopener">淘宝镜像</a>)</li>
+<li>然后<code>cnpm install</code> 安装一下依赖项</li>
+<li>初始化完成之后, 把我们克隆下来的文件拷贝到这个文件夹, 覆盖掉初始化的文件.</li>
+<li>如果不想改之前的主题直接<code>hexo s</code> 就可以在本地跑起来了.</li>
+</ol>
+</li>
+</ol>
+<h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p>其实更换 hexo 主题很简单, 首先我们先去官网选择一个自己喜欢的主题. <a href="https://hexo.io/themes/" target="_blank" rel="noopener">主题官网</a></p>
+<ol>
+<li>主题</li>
+</ol>
+<p>这里我选了个很简洁的主题<a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener">Anatole</a>, 进入这个主题的仓库, 一般作者都会告诉怎么样安装和一些必要的插件.</p>
+<ol start="2">
+<li><p>安装主题<br>这里我直接下载 .zip 压缩包, 解压后把文件名更改为 anatole, 然后移动到你的博客路径下的<code>/themes</code> 文件夹内, 然后修改博客根目录下<code>_config.yml</code>中的<code>theme:</code>属性改为 anatole. (如果你是其他主题就改为你拷贝进来的主题文件夹的名称就好)</p>
+</li>
+<li><p>安装插件<br><code>npm install --save hexo-renderer-jade hexo-generator-archive</code></p>
+</li>
+<li><p>预览及部署命令</p>
+</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新建文章</span></span><br><span class="line">hexo <span class="keyword">new</span> <span class="string">'xxx'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 本地预览</span></span><br><span class="line">hexo s (hexo server)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成静态文件</span></span><br><span class="line">hexo g (hexo generate)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 部署网站 (部署网站前需要先生成静态文件)</span></span><br><span class="line">hexo d (hexo deploy)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 清除缓存</span></span><br><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
+<p>如果部署时报错 Not Found git, 有可能时两个原因: </p>
+<ol>
+<li>博客根目录下 <code>_config.yml</code> 中 <code>deploy.type</code> 如果是 <code>github</code> 那就改为 <code>git</code> (3.0版本更新的问题)</li>
+<li>没有安装插件, 执行命令<code>npm install hexo-deployer-git --save</code></li>
+</ol>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2017-10-14</span><i class="fa fa-tag"></i><a href="/categories/笔记📒/" title="笔记📒" class="tag">笔记📒 </a><a href="/tags/hexo/" title="hexo" class="tag">hexo </a></div></div></div></div><div class="share"><div class="evernote"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></div><div class="weibo"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></div><div class="twitter"><a href="http://twitter.com/home?status=,https://yoursite.com/2017/10/14/关于移植-HEXO/,Cara's Blog,关于移植 HEXO,;" class="fa fa-twitter"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a role="navigation" href="/2017/10/14/CSS-垂直水平居中大整合/" title="CSS  垂直水平居中大整合" class="btn">上一篇</a></li><li class="next pagbuttons"><a role="navigation" href="/2017/06/11/cookie-localStorage-and-sessionStorage/" title="cookie localStorage and sessionStorage" class="btn">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>

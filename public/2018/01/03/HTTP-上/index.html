@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Cara,zzxxcclloopp@gmail.com"><title>《图解 HTTP》(上) · Cara's Blog</title><meta name="description" content="Web使用HTTP(HyperText Transfer Protocal) 超文本传输协议作为规范, 完成从客户端到服务端的一系列流程. 可以说 Web 是在 HTTP 协议上通信的.
+1.0 网络基础TCP/IP通常我们使用的网络是在 TCP/IP 协议族的基础上运行的, 而 HTTP 是属于 "><meta name="keywords" content="hexo, HTML, CSS, Javascript, Node.js"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="http://ordjgqxuv.bkt.clouddn.com/nike-girl/IMG_2930.JPG" style="width:127px;"><h3 title=""><a href="/">Cara's Blog</a></h3><div class="description"><p>咸鱼的博客和学习笔记📒 'Lok-Tar Ogar!'.</p></div></div></div><ul class="social-links"><li><a href="http://github.com/Caraws"><i class="fa fa-github"></i></a></li></ul><div class="footer"></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a onclick="window.history.go(-1)" class="fa fa-chevron-left"> </a></li></div><div class="avatar"><img src="http://ordjgqxuv.bkt.clouddn.com/cara_30/WechatIMG8.jpeg"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>《图解 HTTP》(上)</a></h3></div><div class="post-content"><p>Web使用HTTP(HyperText Transfer Protocal) 超文本传输协议作为规范, 完成从客户端到服务端的一系列流程. 可以说 Web 是在 HTTP 协议上通信的.</p>
+<h3 id="1-0-网络基础TCP-IP"><a href="#1-0-网络基础TCP-IP" class="headerlink" title="1.0 网络基础TCP/IP"></a>1.0 网络基础TCP/IP</h3><p>通常我们使用的网络是在 TCP/IP 协议族的基础上运行的, 而 HTTP 是属于 TCP/IP 族群中的一种协议. 在计算机和网络相互通信的时候, 两者都必须要遵守同一种协议.</p>
+<h4 id="1-1-TCP-IP分层管理"><a href="#1-1-TCP-IP分层管理" class="headerlink" title="1.1 TCP/ IP分层管理"></a>1.1 TCP/ IP分层管理</h4><p>TCP/IP协议族里最重要的一点就是分层, 每一层就只需要专注于自己任务就行了, 按层次分别为以下四层:</p>
+<ol>
+<li><p>应用层<br>决定向用户提供应用服务时的通信活动, 在 TCP/IP 中预存了各类通用的应用服务. 比如: FTP(File Transfer Protocol, 文件传输协议)和 DNS(Domain Name System, 域名系统), HTTP 协议也属于这层.</p>
+</li>
+<li><p>传输层<br>给两个计算机在网络中提供数据传输. TCP(传输控制协议)和 UDP(用户数据报协议)</p>
+</li>
+<li><p>网络层<br>处理网上流动的数据包, 决定数据通过哪条传输路线到对方计算机并把数据传输给对方.</p>
+</li>
+<li><p>链路层<br>处理连接网络的硬件部分. 网卡/ 驱动/ 光纤什么的</p>
+</li>
+</ol>
+<h4 id="1-2-TCP-IP-传输流程"><a href="#1-2-TCP-IP-传输流程" class="headerlink" title="1.2 TCP/IP 传输流程"></a>1.2 TCP/IP 传输流程</h4><p>TCP/IP 在网络通信时, 会按照分层顺序与对方通信. 发送端从应用层往下, 接收端从应用端网上.</p>
+<p><img src="/img/http.jpg" alt="TCP/IP传输流程"></p>
+<h3 id="2-0-与-HTTP-关系密切的协议-IP-TCP-和-DNS"><a href="#2-0-与-HTTP-关系密切的协议-IP-TCP-和-DNS" class="headerlink" title="2.0 与 HTTP 关系密切的协议: IP/TCP 和 DNS"></a>2.0 与 HTTP 关系密切的协议: IP/TCP 和 DNS</h3><ul>
+<li>负责传输的 IP 协议<br>将数据包传递给对方并确认到达, 确认到达的重要条件包括: IP 地址和 MAC 地址.<br><img src="/img/ip.jpg" alt="IP"></li>
+<li>确保可靠性的 TCP 协议<br>为了方便传输将大数据包分割成以报文段为单位的数据包进行管理, 再将数据准确可靠的传递给对方. 那么如何准确可靠的传递给对方呢, 所以就有了TCP 的三次握手策略: 发送端先发送一个带有 <code>SYN</code>标志的数据包给对方, 接收端回传一个带有<code>SYN/ACK</code>标志的数据包传达确认信息, 最后发送端再回传一个带有<code>ACK</code>标志的数据包, 代表握手结束.<br><img src="/img/tcp.jpg" alt="TCP"></li>
+<li>负责域名协议的 DNS 服务<br>提供域名到 IP 地址之间解析服务.<br><img src="/img/dns.jpg" alt="DNS"></li>
+</ul>
+<h4 id="2-1-HTTP-协议的通信过程"><a href="#2-1-HTTP-协议的通信过程" class="headerlink" title="2.1 HTTP 协议的通信过程"></a>2.1 HTTP 协议的通信过程</h4><p>通过一整套流程来看一下, IP协议/ TCP协议 和 DNS服务在 HTTP协议的通信过程中各自发挥了什么作用.<br><img src="/img/HTTP_IP_TCP_DNS.jpg" alt="HTTP协议通信过程"></p>
+<p><strong>从上图来看, 从输入一个网址到页面的展示过程大致如下:</strong></p>
+<ol>
+<li>域名解析(DNS 服务)</li>
+<li>建立TCP, 发送 HTTP 请求(三次握手)<ol>
+<li>客户端向服务器发送请求(SYN)</li>
+<li>服务器应答并要求确认(SYN/ACK)</li>
+<li>客户端确认(ACK)</li>
+</ol>
+</li>
+<li>IP 搜索对方地址, 一边中转一边传输数据包</li>
+<li>服务器处理请求返回 HTTP 响应报文</li>
+<li>连接结束(四次挥手)<ol>
+<li>客户端发送一个 FIN 来告诉服务器数据发送完毕</li>
+<li>服务器收到这个 FIN 之后回发一个 ACK(这个时候服务器还可以向客户端发送数据)</li>
+<li>服务器发送一个 FIN 告诉客户端服务器的数据发送完毕, 请求关闭连接</li>
+<li>客户端回发 ACK 确认, 关闭连接</li>
+</ol>
+</li>
+<li>浏览器解析渲染页面</li>
+</ol>
+<h4 id="2-2-HTTP-是否保存状态"><a href="#2-2-HTTP-是否保存状态" class="headerlink" title="2.2 HTTP 是否保存状态"></a>2.2 HTTP 是否保存状态</h4><p>HTTP 是一种不保存状态(无状态)协议, 协议本身不会保留之前的请求或响应报文的信息. 这是为了更快的处理大量请求, 但是随着 Web 发展<br>很多业务都需要保存用户的状态, 因此引入 Cookie 来管理状态.</p>
+<h3 id="3-0-HTTP-返回状态码"><a href="#3-0-HTTP-返回状态码" class="headerlink" title="3.0 HTTP 返回状态码"></a>3.0 HTTP 返回状态码</h3><p>状态码是用来告诉客户端从服务器响应的请求结果, 可以通过状态码知道该次请求是正常处理了还是发生了错误.</p>
+<h4 id="3-1-状态码的类别"><a href="#3-1-状态码的类别" class="headerlink" title="3.1 状态码的类别"></a>3.1 状态码的类别</h4><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:left">类别</th>
+<th style="text-align:left">原因短句</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1XX</td>
+<td style="text-align:left">信息类</td>
+<td style="text-align:left">接收的请求正在处理</td>
+</tr>
+<tr>
+<td>2XX</td>
+<td style="text-align:left">成功类</td>
+<td style="text-align:left">请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3XX</td>
+<td style="text-align:left">重定向类</td>
+<td style="text-align:left">需要附加操作完成请求</td>
+</tr>
+<tr>
+<td>4XX</td>
+<td style="text-align:left">客户端错误类</td>
+<td style="text-align:left">服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5XX</td>
+<td style="text-align:left">服务器错误类</td>
+<td style="text-align:left">服务器发生错误</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-2-具有代表性的14种状态码"><a href="#3-2-具有代表性的14种状态码" class="headerlink" title="3.2 具有代表性的14种状态码"></a>3.2 具有代表性的14种状态码</h4><ul>
+<li>2XX 成功类<ol>
+<li>200 OK<br>表示请求在服务端被正常处理了</li>
+<li>204  No Content<br>表示请求处理成功但是响应报文不包含实体的主体(本身也不允许返回实体的主体)</li>
+<li>206  Partial Content<br>服务端成功处理了客户端发出的范围请求</li>
+</ol>
+</li>
+<li>3XX 重定向<ol>
+<li>301 Moved Permanently<br>永久性重定向. 请求的资源已经被分配了新的 URI 应该使用新的 URI</li>
+<li>302 Found<br>临时性重定向. 请求的资源被分配了新的 URI, 希望本次请求用新的 URI</li>
+<li>303 See Other<br>请求的资源存在另一个 URI, 应使用 GET 方法定向获取请求的资源(跟302的功能相同)</li>
+<li>304 Not Modified<br>表示请求时附带了条件, 服务端允许请求资源但为满足条件. 所以返回时, 不包含任何响应的主体部分(跟重定向并没有半毛钱关系).</li>
+<li>307 Temporary Redirect<br>临时重定向, 跟302有着同样的一样. 尽管302标准不允许 POST 变为 GET, 但是并没有人遵守; 307会遵守标准但是处理响应时, 每个浏览器有可能出现不同的情况</li>
+</ol>
+</li>
+<li>4XX 客户端错误<ol>
+<li>400 Bad Request<br>请求报文中有语法错误</li>
+<li>401 Unauthorized<br>请求需要通过 HTTP 认证</li>
+<li>403 Forbidden<br>请求资源访问被服务端拒绝(一般都是权限问题)</li>
+<li>404 Not Found<br>服务端上无法找到请求的资源</li>
+<li>405 Not Allow<br>对于请求的资源, 服务端不允许使用请求中使用的方法</li>
+</ol>
+</li>
+<li>5XX 服务器错误<ol>
+<li>500 Internal Server Error<br>服务端在执行请求任务时发生错误</li>
+<li>503 Service Unavailable<br>服务端暂时处于超负载或者停机维护, 无法处理请求(一般就是服务器挂了)</li>
+</ol>
+</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>主要为了大致了解一下 HTTP 的基础/大概的执行流程和常见的HTTP 状态码. 对于状态码之前一直分不太清301和302的区别, 简单的来说: 301 改变资源的URI 后, 如果这个资源是被保存在书签中的, 那么这时要根据新的 URI 保存; 302 表示这个资源只是临时性的移动, 之后这个 URI 可能还会变化. 那么如果也被保存在了书签中, 仍然会保留原来的 URI. 状态码中的 304 放在下次放在缓存策略中再捋一捋吧.</p>
+<p>Create on 2018-1-3 By Cara</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2018-01-03</span><i class="fa fa-tag"></i><a href="/categories/笔记📒/" title="笔记📒" class="tag">笔记📒 </a><a href="/tags/HTTP/" title="HTTP" class="tag">HTTP </a></div></div></div></div><div class="share"><div class="evernote"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></div><div class="weibo"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></div><div class="twitter"><a href="http://twitter.com/home?status=,https://yoursite.com/2018/01/03/HTTP-上/,Cara's Blog,《图解 HTTP》(上),;" class="fa fa-twitter"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a role="navigation" href="/2018/01/04/Promise-分析及实现/" title="Promise 分析及实现" class="btn">上一篇</a></li><li class="next pagbuttons"><a role="navigation" href="/2017/12/20/声明提升/" title="声明提升" class="btn">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
