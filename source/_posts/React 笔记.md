@@ -1,5 +1,5 @@
 ---
-title: React 入门
+title: React 笔记
 date: 2018-06-17 16:59:12
 tags: 
 - JavaScript 
@@ -11,33 +11,7 @@ categories:
 
 #### 安装
 
-官网上有几种使用方式, 我就直接跳到常用的脚手架命令 `create-react-app`, 需要 `node >= 6.0`
-
-```shell
-# 全局安装
-npm install -g creat-react-app
-
-# 使用 create-react-app 并创建 react-start 文件夹
-create-react-app react-start
-
-# 进入 react-start
-cd react-start
-
-# 启用项目
-npm start
-```
-
-如果你使用的 `yarn` 安装则替换为一下命令:
-
-```shell
-# 全局安装
-yarn global add create-react-app --prefix /usr/local
-
-# 启用换成相应的 yarn
-yarn start
-```
-
-等待安装完成之后, 就成功启动了第一个 react 项目. 看一眼项目结构, 呃... 这么简洁的吗?
+直接使用 `create-react-app`, 这个过程想必大家都很熟悉了就不再说. 等待安装完成之后, 就成功启动了第一个 react 项目. 看一眼项目结构, 呃... 这么简洁的吗?
 
 #### 目录结构
 
@@ -199,17 +173,17 @@ ReactDOM.render(
 react 中提倡把一个组件拆分成多个小组件便于复用, 尤其是 UI 组件. 我理解的是因为 React 一切皆函数, 具体到 `button` 这种小的 UI 组件, 每次都重写一遍就很没意义, 所以尽量拆小一点以便复用. 官网中以评论框为例, 这里就不再复述.
 
 ** Props 是只读的**
-在 React 中有一条非常严格的规则: 所有 React 的组件都必须是纯函数, 不得改变自身组件的 props. (纯函数是指: 不会改变参数的输入, 对于相同的输入始终可以得到相同的结果) 看到官网这么说我也很疑惑 UI 组件不可能都是纯的静态组件啊, 肯定有根据状态动态改变视图的, 或者做一些过滤和格式化的操作. 于是到了状态和生命周期
+在 React 中有一条非常严格的规则: 所有 React 的组件都必须是纯函数, 不得改变自身组件的 props. (纯函数是指: 不会改变参数的输入, 对于相同的输入始终可以得到相同的结果) 看到官网这么说我也很疑惑 UI 组件不可能都是纯的静态组件啊, 肯定有根据状态动态改变视图的, 或者做一些过滤和格式化的操作. 于是来到状态和生命周期
 
 > react 写 html 标签在 vscode 中使用 emmet 自动补全需要如下配置:
 
 ```json
 "emmet.includeLanguages": {
-    "javascript": "javascriptreact"
+  "javascript": "javascriptreact"
 }
 ```
 
-#### State 和生命周期
+##### State 和生命周期
 
 state 和 props 类似都在组件内部由组件自己维护, 可以说是组件自身的一个局部状态吧. 举例说明:
 
@@ -238,7 +212,7 @@ class Clack extends React.Component {
 }
 ```
 
-现在我们有了一个有着局部状态的类组件, 接下来让 Clack 设置自己的计时器, 两秒更新一次. 就会用到声明周期函数了, 组件在挂载时称为 `mounting`(挂载); 卸载时称为 `unmounting`(卸载)
+现在我们有了一个有着局部状态的类组件, 接下来让 Clack 设置自己的计时器, 两秒更新一次.
 
 ```js
 class Clack extends React.Component {
@@ -249,12 +223,12 @@ class Clack extends React.Component {
     }
   }
 
-  // 组件第一次挂载到 DOM 时
+  // 组件第一次挂载到 DOM 时(钩子)
   componentDidMount () {
     this.timer = setInterval(_ => this.ticker(), 2000)
   }
 
-  // 组件被销毁时
+  // 组件被销毁时(钩子)
   componentWillUnmount () {
     clearInterval(this.timer)
   }
@@ -277,22 +251,84 @@ class Clack extends React.Component {
 }
 ```
 
-于是在 Clack 组件第一次被挂载到 DOM 时, 通过 `componentDidMount` 生命周期钩子函数调用一个定时器, `setState` 改变组件状态来达到定时更新时间; 而在组件销毁时通过 `componentWillMount` 钩子来停止定时器.
+于是在 Clack 组件第一次被挂载到 DOM 时, 通过 `componentDidMount` 生命周期钩子调用一个定时器, `setState` 改变组件状态来达到定时更新时间; 而在组件销毁时通过 `componentWillMount` 钩子来停止定时器.
 
-** State 的注意事项 **
+**组件的生命周期**
+组件的生命周期分为三大类: `Mounting`(装载时); `updating`(更新); `unmounting`(卸载时). 跟 Vue 一样你可以在钩子函数里运行一些特定的代码.
 
-- 不要直接修改 state, 应该通过 setState().
-- state 的更新可能是异步的, 因为 React 可能会将多个 setState() 合并为一次更新, 如果需要可以用函数作为参数, 如:
+1. Mounting(装载): 当组件实例创建且插入 DOM 时, 下面的方法将会被调用
+  - constructor()
+    初始化 props/ state 或者绑定事件处理程序
 
-```js
-this.setState((prevState, props) => {
-  count: prevState.count + props.increment
-})
-```
+  - componentWillMount()
 
-- state 的更新可能会被合并. 两个独立状态分别更新, 前一个状态可能不会被更新但后一个状态一定会被更新.
+  - render()
+    通常用来返回 React 元素(数字/字符/portals/null: 不渲染/布尔值:不渲染任何东西) 且应该是纯函数, 注意当 `shouldComponentUpdate()` 返回 false 时, render 不会被调用.
+
+  - componentDidMount()
+    在组件装载后立即调用, 等同于 Vue 的 mounted(). 在这个函数中使用 `setState()` 会触发两次 render(但不会被用户感知).
+
+2. Updating(更新): 当 props 和 state 发生改变, 重新渲染组件会触发以下钩子
+
+  - componentWillReceiveProps(nextProps)
+    `componentWillReceiveProps(nextProps)` 在响应 props 变化之前被调用. 有个注意点是有可能 props 没有更新 React 也调用了这个函数, 所以如果你只关心变化需要自己比较当前值和下一个值.
+
+  - shouldComponentUpdate(nextProps, nextState)
+    组件是否受 props 和 state 变化的影响, 默认返回 true. 首次渲染或使用 `forceUpdate()` 时不调用此方法;  如果 `shouldComponentUpdate()` 返回 false, 那么 `componentWillUpdate()`, `render()` 和 `componentDidUpdate()` 将不会调用. 所以你可以手动返回 false 告诉 React 这次不必更新, 另外不要在这里进行深度检查(如: 深拷贝) 会非常消耗性能.
+
+  - componentWillUpdate(nextProps, nextState)
+    该函数在第一次渲染时不会被调用, 会在收到 `nextProps` 或 `nextState` 之后在更新渲染之前被立即调用. 需要主要注意的是这里不能使用 `setState()`, 如果需要用 state 响应 props 的变化, 改用 `componentWillReceiveProps()`.
+
+  - render()
+
+  - componentDidUpdate(prevProps, prevState)
+    第一次渲染时不会调用, 在更新发生后立即被调用
+
+3. Unmounting(卸载): 组件从 DOM 上删除
+
+  - componentWillUnmount()
+    在组件被卸载或者销毁之前调用, 在这里通常用来取消一些订阅.
+
+个人觉得 React 的生命周期钩子名字要比 Vue 的好理解一点, 起码一看名字就知道是啥.
+
+**其他 API**
+
+- setState(): 只是一个请求而不是立即命令来更新组件, 所以并不总是立即更新. 如果需要在 `setState()` 之后立即读取 `this.state`, 需要使用 `componentDidUpdate` 或者 `setState(updater, callback)`.(setState() 的第一个参数可以是对象, 也可以是函数)
+
+  ```js
+  // 参数为对象
+  this.setState({count: 2})
+
+  // 第一个参数为函数会保证 prevState, props 是最新的, 第二个参数是可选的 callback
+  // callback 会在 setState 完成后执行并重新渲染组件
+  this.setState((prevState, props) => {
+    return { count: prevState.count + props.increment }
+  })
+
+  // 使用到 callback 的话, 建议使用 componentDidUpdate()
+  ```
+
+- defaultProps: 为类设置默认的 props.
+  使用下面的组件时不传入 `props.color`, 他就会被设置为 `'blue'`. 如果被手动设置为 null 那它会保持为 null
+
+  ```js
+    class Ball extends React.Component {
+      // ...
+    }
+
+    Ball.defaultProps = {
+      color: 'blue'
+    }
+
+    // 在其他地方使用时, color 将保持为 null
+    render () {
+      return <Ball color={null} />
+    }
+  ```
+
+**state 的注意事项**
+
+- state 是组件内部的状态, 如果不在 `render()` 中使用那它就不应该是 `state`. 永远不要直接改变 `state`
 - 数据向下流动, 一个组件的 state 可以向下传递作为子组件的 props, 也就是常说的单向数据流.
-
-以上就是这次初步学习 React 的经历, 大部分跟 Vue 还是相似只是换了一种写法而已, 下次会继续深入学习其他部分.
 
 created on 2018-06-18
