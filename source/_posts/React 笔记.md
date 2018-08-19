@@ -131,9 +131,9 @@ const image = <img src={user.avatarImg} />
 
 ##### Components 和 Props
 
-** 函数式组件和类组件 **
+** 函数式组件(无状态)和类组件 **
 
-一个有效的函数式组件, 可以接收一个 props 并返回一个 React 元素. 因为它本身长的就很像函数, 所以称之为函数式组件
+一个有效的函数式组件, 可以接收一个 props 并返回一个 React 元素. 因为它本身长的就很像函数, 所以称之为函数式组件.
 
 ```js
 // 函数式组件
@@ -142,30 +142,75 @@ const Welcome = (props) => {
 }
 ```
 
-也可以用 ES6 中的 Class 来定义一个组件
+函数式组件也是无状态组件, 无状态组件可以很方便的通过组合构建为其他组件, 只带有一个 render 返回组件没有 `state` 状态.
+无状态组件被鼓励在大型的项目中将组件尽量的分割原本大型的组件.
+
+它的特点:
+
+- 精简, 可读性高
+- 组件不会实例化, 减少内存, 提高渲染性能
+- 组件不能访问 `this`(因为没有实例化)
+- 不能使用生命周期方法(因为无状态)
+- 只能传入 props, 没有副作用
+
+也可以用 ES6 中的 Class 来定义一个组件(React.Component), 也是 React 推荐的创建有状态组价的方式
 
 ```js
 // 类组件
-class Welcome extend React.Component {
+class StateComponent extends React.Component {
+  constructor (props) {
+    super(props)
+    // 初始化 state
+    this.state = {
+      text: this.props.initText || 'placeholder'
+    }
+    // 类函数必须手动绑定
+    this.handleTextChange = this.handleTextChange.bind(this)
+  }
+
+  handleTextChange (e) {
+    this.setState({
+      text: e.target.value
+    })
+  }
+
   render () {
-    return <h1>Hello, {this.props.name}</h1>
+    return <div>
+      <input
+        type="text"
+        onChange={this.handleTextChange}
+        value={this.state.text} />
+        {this.state.text}
+    </div>
   }
 }
 ```
 
-渲染的一个组件:
+React.Component 创建的组件不会自动绑定 `this`, 需要我们手动绑定, 否则事件处理程序不能通过 `this` 获取当前组件的实例对象.
 
 ```js
-const element = <Welcome name="cara" />
+class GetThis extends React.Component {
+  constructor (props) {
+    super(props)
+  }
 
-ReactDOM.render(
-  element,
-  document.getElementById('root')
-)
-// 显示为 Hello, cara
+  handleClick () {
+    console.log(this) // null
+  }
+
+  render () {
+    return <button onClick={this.handleClick}></button>
+  }
+}
 ```
 
-通过 `this.props` 就能获取到从组件外层传入的自定义属性, 跟 Vue 组件内部的 `props` 类似.
+手动绑定 `this` 的方式:
+
+- 在构造函数中绑定
+- 使用时通过 `method.bind(this)` 绑定
+- 调用时使用箭头函数
+
+`this.props` 可以获取到从组件外层传入的自定义属性, 跟 Vue 组件内部的 `props` 类似.
 
 > 注意: 组件的名称都以大写字母开头, 属性名使用驼峰命名; 组件中跟 Vue 一样都需要一个根节点.
 
