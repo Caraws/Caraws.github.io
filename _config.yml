@@ -76,7 +76,7 @@ theme: anatole
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:Caraws/Caraws.github.io.git
+  repository: https://github.com/Caraws/Caraws.github.io.git
   branch: master 
 
 # Extensions
