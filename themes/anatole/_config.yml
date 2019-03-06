@@ -2,7 +2,8 @@
 keywords: Hexo,HTML,CSS,android,Linux
 author: Author Name,name@example.com
 description: 咸鱼的学习📒 Lok'tar
-avatar: http://ordjgqxuv.bkt.clouddn.com/cara_30/WechatIMG8.jpeg
+avatar: /images/favicon.jpeg
+avatar_big: /images/avator.jpg
 
 # Social Accounts
 twitter: 
