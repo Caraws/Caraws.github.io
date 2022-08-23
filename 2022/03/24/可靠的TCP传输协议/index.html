@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Author Name,name@example.com"><title>可靠的TCP传输协议 · Cara's Blog</title><meta name="description" content="提到 TCP 协议大家印象最深刻的应该就是”可靠性”这三个字了, 因此为了保证”可靠性”真的是用了好多机制来保证😂 . 不知道当初设计 TCP 的大佬们看到现在的 QUIC 协议会不会觉得好气
+那么为了实现可靠性, TCP 到底做了哪些事呢? 主要要是通过 数据序列号 / 确认应答 / 流量控制 "><meta name="keywords" content="Hexo,HTML,CSS,android,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/avator.jpg" style="width:127px;"><h3 title=""><a href="/">Cara's Blog</a></h3><div class="description"><p>咸鱼的学习📒 Lok'tar</p></div></div></div><ul class="social-links"><li><a href="/atom.xml"><i class="fa fa-rss"></i></a></li><li><a href="http://github.com/Caraws"><i class="fa fa-github"></i></a></li></ul><div class="footer"></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a onclick="window.history.go(-1)" class="fa fa-chevron-left"> </a></li></div><div class="avatar"><img src="/images/favicon.jpeg"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>可靠的TCP传输协议</a></h3></div><div class="post-content"><p>提到 <code>TCP</code> 协议大家印象最深刻的应该就是”可靠性”这三个字了, 因此为了保证”可靠性”真的是用了好多机制来保证😂 . <em>不知道当初设计 TCP 的大佬们看到现在的 <code>QUIC</code> 协议会不会觉得好气</em></p>
+<p>那么为了实现可靠性, TCP 到底做了哪些事呢? 主要要是通过 <code>数据序列号</code> / <code>确认应答</code> / <code>流量控制</code> / <code>拥塞控制</code> / <code>重发机制</code> 这几个机制来实现的, 下面就一次聊聊这些机制到底在做些什么.</p>
+<h4 id="数据序列号和确认应答"><a href="#数据序列号和确认应答" class="headerlink" title="数据序列号和确认应答"></a>数据序列号和确认应答</h4><p>首先 TCP 协议是面向字节流的, 而经过 TCP 协议的数据会被拆分到多个数据段中, 每个数据段中都会包含一个序列号的协议头, 这个序列号就是我们所说的数据序列号了.</p>
+<p>那确认应答是啥呢? 在 TCP 中, 当发送端发送的数据到达接收端时, 接收端会回复一个确认应答的消息, 表示已收到消息. 而这个应答消息也就是我们常说的 ACK(Acknowledge character）报文段</p>
+<blockquote>
+<p>ACK 是指 TCP 的报文到达确认, 确认接收到的数据的最高序列号，同时向发送端返回一个下次接收时期望的 TCP 数据包的序列号(也就是 ACK 的值)</p>
+</blockquote>
+<p>那么在网络过程中, 数据的传输过程中大概会是这样:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">主机 A                                      主机 B</span><br><span class="line">      ----    数据 1 ~ 100   ------&gt;</span><br><span class="line">      &lt;--- 确认应答(下一个101) ------</span><br><span class="line">      ---- 数据 101 ~ 200    ------&gt;</span><br><span class="line">      &lt;--- 确认应答(下一个201) ------</span><br></pre></td></tr></table></figure></p>
+<p>但其实在网络, 并不会上述的过程中那么顺利, 那么当数据在传输过程中丢失了怎么办? 所以有了<code>重传机制</code></p>
+<h4 id="重传机制"><a href="#重传机制" class="headerlink" title="重传机制"></a>重传机制</h4><p>重传机制主要有四种方式: <code>计时重传</code> / <code>快速重传</code> / <code>带确认重传(SACK)</code> / <code>D-SACK</code></p>
+<p><strong>计时重传</strong><br>计时重传是指在发送数据时, 启动一个计时器, 当超过指定时间后没有收到对方的 <code>ACK</code> 确认应答报文, 那么就会重新发送数据同时降低发送速率. </p>
+<blockquote>
+<p>举例来说:<br>假如传输的数据 12345, 1 丢掉了, 2345 被接收到了, 因为丢掉了数据包 1 所以接收方没法发送 ACK 报文. 那么发送方也就只能等着接收方发 ACK, 双方就只能死等数据段 1, 从而造成超时. 而超时之后发送方并不知道丢了那些数据段, 就只能悲观的认为数据 1 之后的数据也都丢了, 那么就要重传所有数据段.</p>
+</blockquote>
+<p>从上面的过程中, 我们可以发现计时重传会有两个问题:</p>
+<ol>
+<li>只有等超时后才能重传</li>
+<li>不知道重传数据范围</li>
+</ol>
+<p><strong>快速重传</strong><br>快速重传是基于计时重传, 主要解决了要等待超时才能重传的问题. 所以快速重传的做法是: 当接收方收到乱序包时, 立即发送 ACK 表明下个期望接收的数据(其实就是丢失的那个数据). 而发送方连续收到三次相同的 ACK 就会重传, 不需要等到是计时器超时.</p>
+<p><strong>带确认重传(SACK)</strong><br>上面的快速重传解决了超时的问题, 那么剩应该重传数据范围的问题. 那么 SACK 就是在快速重传的基础上, 增加一个 <code>SACK</code> 的头, 将已收到的数据报文段的序列号范围告诉发送方, 这样发送方就可以只重传丢失的数据</p>
+<p><img src="https://pic1.zhimg.com/80/v2-f65effd9010fbfe7f0ad0d3b256854e8_720w.jpg" alt="带确认重传过程"></p>
+<p><strong>D-SACK</strong><br>D-SACK 主要是为了告诉发送方哪些数据重复接收了. 上面不是已经有 SACK 告诉发送方哪些数据报文段是已接收了的吗, 为啥还需要 D-SACK? 因为在网络中我们的 ACK 报文和数据段报文都可能会丢失呀! 比如以下两种情况:</p>
+<ol>
+<li><p>ACK 应答报文丢失: </p>
+<ul>
+<li>当接收方分别收到数据 1 和 2, 并回复 ACK = 2 和 ACK = 3</li>
+<li>ACK 丢失了发送方一直收不到 ACK 自然无法触发快速重传</li>
+<li>于是触发超时重传, 超时重传只好再重发一次数据 1. (造成重复数据)</li>
+<li>接收方再次收到重发的数据, 响应 ACK = 3 和 SACK = 1 ~ 2</li>
+</ul>
+<p>此时的 SACK 就会变成表示重复收到的数据包范围, 这样发送方就知道了原来是接收方的 ACK 报文丢失了</p>
+</li>
+<li><p>网络延迟: </p>
+<ul>
+<li>发送方法送了数据 1234, </li>
+<li>数据 2 延迟了一直没有到达接收方</li>
+<li>数据 134 顺利达到于是接收方会分别回复三次 ACK = 2, SACK = 3 和 SACK = 3 ~ 4 触发到了快速重传</li>
+<li>在快速重传的数据 2 达到之前, 先收到了之前延迟的数据 2, 在收到重发的数据 2 (造成重复数据)</li>
+<li>接收方回复 ACK = 5 和 SACK = 2</li>
+</ul>
+<p>此时 ACK已经到了 5, SACK 还是 2 说明这个是重复数据. 同时发送方也知道了不是发出去的包丢失了, 也不是 ACK 报文丢了, 而是网络延迟了</p>
+</li>
+</ol>
+<h4 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h4><p>流量控制是为了防止发送方发送的速率太快, 导致接收方的缓存区溢出. 基本原理就是让发送方知道接收方的缓存区大小, 以调整发送速率.</p>
+<p>这一原理通过滑动窗口来实现的, 其中接收方的缓存区大小叫做<code>接收窗口(rwnd)</code>大小, 发送方的发送速率由<code>发送窗口(swnd)</code>大小决定. 发送窗口的大小不能大于接收窗口的大小, 否则接收方就处理不过来了</p>
+<blockquote>
+<p>引入窗口的原因: 从上面传输数据的过程, 我们知道传输过程都是一来一回的, 所以数据的往返时间越长, 通讯效率就越差. 而窗口大小就是指无需等待确认应答，而可以继续发送数据的最大值. </p>
+</blockquote>
+<p>以发送方的窗口为例: 窗口相当于开辟一个缓存区域, 将以发送的数据保存在缓存区中, 在收到 ACK 应答之前必须一直保存, 直到收到应答才清除缓存, 然后按收到应答的数据字节向右滑动. <em>注: 两个窗口的大小都是放在操作系统内存缓冲区中的，而操作系统的缓冲区会被操作系统调整</em></p>
+<p><code>窗口关闭(死锁)</code><br>  当窗口不为 0 的应答丢失时，发送方会一直等待，而接收方以为发送方收到了则一直等待新数据，这样相互等待的过程就造成了死锁</p>
+<p>解决方案:<br>  用持续计时器来解决，每当收到接收方窗口为 0 时，都启动一个计时器时间一到发送方就主动询问接收方窗口大小。如果还是 0 就重置计时器；不为 0 则表示之前的报文丢失了，重置窗口，再重新开始发送</p>
+<p><code>糊涂窗口</code><br>如果接收方太忙了，来不及取走接收窗口里的数据，那么就会导致发送方的发送窗口越来越小. 到最后接收方窗口大小只有几个字节了, 发送方还是义无反顾的发送几个字节的数据. 这就是糊涂窗口</p>
+<p>于是，要解决糊涂窗口综合症，有下面两个办法:</p>
+<ul>
+<li>让接收方不通告小窗口给发送方<ul>
+<li>当窗口大小 &lt; Math.min(最大数据段数量MSS，缓存空间/2 ), 直接告诉发送方窗口为 0</li>
+</ul>
+</li>
+<li>让发送方避免发送小数据<ul>
+<li>要等到接收窗口大小 &gt;= MSS</li>
+<li>收到之前发送数据的 ACK 回包</li>
+</ul>
+</li>
+</ul>
+<h4 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h4><p>跟流量控制的区别在于, 拥塞控制作用于网络. 根据丢包情况和网络带宽防止过多数据注入网络，造成网络负载过大.</p>
+<p>试想在网络出现拥堵时，如果继续发送大量数据包，可能会导致数据包时延、丢失等，这时 TCP 就会重传数据，但是一重传就会导致网络的负担更重，于是会导致更大的延迟以及更多的丢包，然后进入恶性循环, 于是有了拥塞控制.</p>
+<p>拥塞控制中, 会在发送方新增一个<code>拥塞窗口(cwnd)</code>的变量, 它随着网络拥塞程度动态变化. <em>注: 加入了拥塞窗口后, 发送窗口的值swnd = min(cwnd, rwnd)，也就是拥塞窗口和接收窗口中的最小值</em></p>
+<p>拥塞窗口 cwnd 变化的规则：</p>
+<ul>
+<li>只要网络中没有出现拥塞，cwnd 就会增大</li>
+<li>但网络中出现了拥塞，cwnd 就减少</li>
+</ul>
+<p>那怎么判断网络出现拥塞了呢?<br>结合之前聊到的数据传递过程, 可以推断出当发送方没有及时收到 ACK 响应, 就可以认为是网络拥塞了</p>
+<p>拥塞控制又控制些啥, 主要控制了四个算法: <code>慢启动</code> / <code>拥塞避免</code> / <code>快速重传</code> / <code>快速恢复</code>, </p>
+<ul>
+<li><p>慢启动<br>是指一点一点提高发送数据包的数量，发送方每收到一个接收方的 ACK 响应,  拥塞窗口大小就加倍，呈指数级增长.同时还会维护一个慢启动阈值(ssthresh)</p>
+</li>
+<li><p>拥塞避免<br>发送方每收到一个接收方的 ACK 响应,  拥塞窗口大小就 + 1，趁线性增长，减缓拥塞窗口增长速度</p>
+<p>慢启动阈值会决定使用慢启动还是拥塞避免:</p>
+<ul>
+<li>当拥塞窗口大小 &lt; 慢启动阈值, 使用慢启动</li>
+<li>拥塞窗口大小 &gt;= 慢启动阈值, 使用拥塞避免</li>
+</ul>
+</li>
+<li><p>快速重传<br>当网络发生拥塞，接收方收到了三次重复 ACK，触发快速重传机制.<br>TCP 会认为这种情况没有很严重, 则调整拥塞窗口和慢启动阈值:</p>
+<ul>
+<li>拥塞窗口大小 = 拥塞窗口大小 / 2</li>
+<li>慢启动阈值 = 拥塞窗口大小</li>
+</ul>
+<p>接着进入快速恢复</p>
+</li>
+<li><p>快速恢复<br>在基于快速重传将拥塞窗口大小 + 3（因为收到了三个数据包），重传丢失的数据包，收到 ACK 恢复了就进入拥塞避免算法，再次尝试让拥塞窗口增大</p>
+</li>
+</ul>
+<p>如果网络拥塞到触发了计时重传, 那就一棒回到解放前, 重新开始慢启动来大幅减少数据流.同时慢启动阈值和拥塞窗口大小也会发生变化：</p>
+<ul>
+<li>慢启动阈值 设为 拥塞窗口大小/2</li>
+<li>拥塞窗口大小 重置为 1</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>TCP 的可靠性是由:</p>
+<ul>
+<li><code>序列号</code>和<code>确认应答</code>来保证数据到达接收方</li>
+<li><code>流量控制</code>用滑动窗口来防止发送方发送速率过快导致接收方处理不过来</li>
+<li><code>拥塞控制</code>用慢启动 / 拥塞避免 / 快速重传 / 快速恢复来防止大量数据在网络中造成拥堵, 从而造成更多数据延迟/丢包带来恶性循环</li>
+</ul>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-03-24</span><i class="fa fa-tag"></i><a href="/categories/笔记📒/" title="笔记📒" class="tag">笔记📒 </a><a href="/tags/网络/" title="网络" class="tag">网络 </a></div></div></div></div><div class="share"><div class="evernote"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></div><div class="weibo"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></div><div class="twitter"><a href="http://twitter.com/home?status=,https://yoursite.com/2022/03/24/可靠的TCP传输协议/,Cara's Blog,可靠的TCP传输协议,;" class="fa fa-twitter"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a role="navigation" href="/2022/03/25/细说HTTP变化史/" title="细说HTTP变化史" class="btn">上一篇</a></li><li class="next pagbuttons"><a role="navigation" href="/2022/03/21/傻傻分不清之作用域-执行上下文/" title="傻傻分不清之作用域/执行上下文" class="btn">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>

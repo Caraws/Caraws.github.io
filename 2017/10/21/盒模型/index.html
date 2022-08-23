@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Author Name,name@example.com"><title>盒模型 · Cara's Blog</title><meta name="description" content="CSS 盒模型 (Box Model), 包含的要素分别为: content/padding/border/margin.
+标准盒模型 &amp;amp; 怪异盒模型盒模型分为W3C的标准盒模型和IE的标准盒模型.
+
+标准盒模型content + padding+ border + margin  标准盒模"><meta name="keywords" content="Hexo,HTML,CSS,android,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/avator.jpg" style="width:127px;"><h3 title=""><a href="/">Cara's Blog</a></h3><div class="description"><p>咸鱼的学习📒 Lok'tar</p></div></div></div><ul class="social-links"><li><a href="/atom.xml"><i class="fa fa-rss"></i></a></li><li><a href="http://github.com/Caraws"><i class="fa fa-github"></i></a></li></ul><div class="footer"></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a onclick="window.history.go(-1)" class="fa fa-chevron-left"> </a></li></div><div class="avatar"><img src="/images/favicon.jpeg"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>盒模型</a></h3></div><div class="post-content"><p><code>CSS</code> 盒模型 (Box Model), 包含的要素分别为: content/padding/border/margin.</p>
+<h3 id="标准盒模型-amp-怪异盒模型"><a href="#标准盒模型-amp-怪异盒模型" class="headerlink" title="标准盒模型 &amp; 怪异盒模型"></a>标准盒模型 &amp; 怪异盒模型</h3><p>盒模型分为W3C的标准盒模型和IE的标准盒模型.</p>
+<ul>
+<li><p>标准盒模型<br><code>content + padding+ border + margin</code>  标准盒模型的 content 是不包含其他部分的, 如下图:<br><img src="http://orf90agxq.bkt.clouddn.com/GitHub/boxW3C_BOX.jpeg" alt="W3C-BOX"></p>
+</li>
+<li><p>IE标准盒模型<br><code>content(padding + border) + margin</code> 而IE标准盒模型的 content 已经包含padding和border的值, 如下图:<br><img src="http://orf90agxq.bkt.clouddn.com/GitHub/boxIE_BOX.jpeg" alt="IE-BOX"></p>
+</li>
+</ul>
+<p>在文档顶部声明 <code>DOCTYPE</code> 就是为了让浏览器使用 W3C标准盒模型, 但是在 IE5/ IE6 下依然是 IE 标准盒模型. 当然通过<code>box-sizing</code>属性可以在两者之间转换.</p>
+<h4 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h4><ol>
+<li><p>两个垂直方向相邻的块级元素相遇时, 外边距会合并且取值两者较大值的 <code>margin</code> 作为外边距.</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">解决方案:</span><br><span class="line"> *&#123;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span>; </span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>margin 出轨…<br>当父元素没有 <code>border</code> 边框时, 第一个子元素添加 <code>margin-top</code> 会超出父元素, 相同最后一个子元素添加 <code>margin-bottom</code> 也同样会超出父元素, 如下图: </p>
+</li>
+</ol>
+<ul>
+<li><p>第一个子元素添加 margin-top<br><img src="http://orf90agxq.bkt.clouddn.com/box_modelmargin.png" alt="marginTop"></p>
+</li>
+<li><p>最后一个子元素添加 margin-bottom<br><img src="http://orf90agxq.bkt.clouddn.com/box_modelmarginBottom.png" alt="marginBottom"></p>
+</li>
+<li><p>前两者同时存在时, 父元素添加 border<br><img src="http://orf90agxq.bkt.clouddn.com/box_modelborder.png" alt="marginBottom"></p>
+</li>
+</ul>
+<p>解决方案有四种: </p>
+<blockquote>
+<ol>
+<li>给父元素添加 border.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>给父元素添加 padding.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>给父元素添加 overflow: hidden.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>给父元素添加伪类. (最佳)<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.parent</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">display</span>: table;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<p>Created on 2017-8-15 by Cara</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2017-10-21</span><i class="fa fa-tag"></i><a href="/categories/复习/" title="复习" class="tag">复习 </a><a href="/tags/CSS/" title="CSS" class="tag">CSS </a></div></div></div></div><div class="share"><div class="evernote"><a href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank" class="fa fa-bookmark"></a></div><div class="weibo"><a href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));" class="fa fa-weibo"></a></div><div class="twitter"><a href="http://twitter.com/home?status=,https://yoursite.com/2017/10/21/盒模型/,Cara's Blog,盒模型,;" class="fa fa-twitter"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a role="navigation" href="/2017/10/22/base64-转-blob/" title="base64 转 blob" class="btn">上一篇</a></li><li class="next pagbuttons"><a role="navigation" href="/2017/10/18/位运算符/" title="位运算符" class="btn">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
