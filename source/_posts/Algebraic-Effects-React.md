@@ -370,7 +370,7 @@ function ProfileTimeline() {
 - react 内部`catch`到`thenable`的函数放进`updateQueue`更新队列中,  对应组件会被标记为`mode: 'hidden'`. 相当于暂停了当前函数的执行(PS: 其实这个时候子组件的对应 Fiber 和对应关系已经创建好, 只是放在缓存池了)
 - 在`promise`完成后, React 会在 commit 阶段重新调度渲染子组件, 其实就是恢复执行了.  
 
-> 虽然本质上也不是恢复了函数, 不过在 React 看来这里重新渲染组件和恢复执行没什么区别. 因为在 Suspense 内部不管是 fallback 还是子组件都只会创建一次同时> 会建立好节点之间的对应关系, 后续 rerender 的时候只是改变了 child 的指针罢了
+> 虽然本质上也不是恢复了函数, 不过在 React 看来这里重新渲染组件和恢复执行没什么区别. 因为在 Suspense 内部不管是 fallback 还是子组件都只会创建一次同时会建立好节点之间的对应关系, 后续 rerender 的时候只是改变了 child 的指针罢了
 
 ## 总结
 代数效应本质上就是把"做什么"和"如何做"这两件事儿分离了, 同时提供了对流程控制的能力. React 也是结合了这些特征, 从原来依赖 JS  原生调用栈同步更新方式重构为了现在 Fiber Reconciler 自己模拟了一套组件调用栈/Hooks/Suspense 一系列的新特性. 也印证了 React Hooks 作者的那一句话`我们在 React 中所做的事就是在践行代数效应`
